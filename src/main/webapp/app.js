@@ -1,5 +1,5 @@
 angular.module('employeeApp', ['ngRoute'])
-    .config(['$routeProvider', function($routeProvider) {
+    .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
             .when('/', {
                 template: `
@@ -117,7 +117,7 @@ angular.module('employeeApp', ['ngRoute'])
                 controller: 'EmployeeController'
             });
     }])
-    .controller('EmployeeController', ['$scope', '$http', function($scope, $http) {
+    .controller('EmployeeController', ['$scope', '$http', function ($scope, $http) {
         $scope.employees = [];
         $scope.currentEmployee = {};
         $scope.showForm = false;
@@ -126,28 +126,28 @@ angular.module('employeeApp', ['ngRoute'])
         $scope.foundEmployee = null;
 
         // Fetch all employees
-        $scope.loadEmployees = function() {
+        $scope.loadEmployees = function () {
             $http.get('/api/employees')
-                .then(function(response) {
+                .then(function (response) {
                     $scope.employees = response.data;
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error('Error fetching employees:', error);
                     alert('Failed to load employees');
                 });
         };
 
         // Find employee by ID
-        $scope.findEmployeeById = function() {
+        $scope.findEmployeeById = function () {
             if (!$scope.searchId) {
                 alert('Please enter an Employee ID');
                 return;
             }
             $http.get('/api/employees/' + $scope.searchId)
-                .then(function(response) {
+                .then(function (response) {
                     $scope.foundEmployee = response.data;
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error('Error finding employee:', error);
                     alert('Employee not found or error occurred');
                     $scope.foundEmployee = null;
@@ -155,21 +155,21 @@ angular.module('employeeApp', ['ngRoute'])
         };
 
         // Show create form
-        $scope.showCreateForm = function() {
+        $scope.showCreateForm = function () {
             $scope.currentEmployee = {};
             $scope.formTitle = 'Create Employee';
             $scope.showForm = true;
         };
 
         // Show update form
-        $scope.showUpdateForm = function(employee) {
+        $scope.showUpdateForm = function (employee) {
             $scope.currentEmployee = angular.copy(employee);
             $scope.formTitle = 'Update Employee';
             $scope.showForm = true;
         };
 
         // Save or update employee
-        $scope.saveEmployee = function() {
+        $scope.saveEmployee = function () {
             var method = $scope.currentEmployee.id ? 'PUT' : 'POST';
             var url = $scope.currentEmployee.id ?
                 '/api/employees/' + $scope.currentEmployee.id :
@@ -179,25 +179,25 @@ angular.module('employeeApp', ['ngRoute'])
                 method: method,
                 url: url,
                 data: $scope.currentEmployee
-            }).then(function(response) {
+            }).then(function (response) {
                 $scope.loadEmployees();
                 $scope.cancelForm();
                 $scope.foundEmployee = null; // Clear found employee after save
-            }).catch(function(error) {
+            }).catch(function (error) {
                 console.error('Error saving employee:', error);
                 alert('Failed to save employee');
             });
         };
 
         // Delete employee
-        $scope.deleteEmployee = function(id) {
+        $scope.deleteEmployee = function (id) {
             if (confirm('Are you sure you want to delete this employee?')) {
                 $http.delete('/api/employees/' + id)
-                    .then(function() {
+                    .then(function () {
                         $scope.loadEmployees();
                         $scope.foundEmployee = null; // Clear found employee after delete
                     })
-                    .catch(function(error) {
+                    .catch(function (error) {
                         console.error('Error deleting employee:', error);
                         alert('Failed to delete employee');
                     });
@@ -205,7 +205,7 @@ angular.module('employeeApp', ['ngRoute'])
         };
 
         // Import employees from XML
-        $scope.importEmployees = function() {
+        $scope.importEmployees = function () {
             var fileInput = document.getElementById('xmlFile');
             var file = fileInput.files[0];
             if (!file) {
@@ -216,25 +216,25 @@ angular.module('employeeApp', ['ngRoute'])
             formData.append('file', file);
 
             $http.post('/api/employees/import', formData, {
-                headers: { 'Content-Type': undefined }
-            }).then(function(response) {
+                headers: {'Content-Type': undefined}
+            }).then(function (response) {
                 alert(response.data);
                 $scope.loadEmployees();
                 fileInput.value = '';
-            }).catch(function(error) {
+            }).catch(function (error) {
                 console.error('Error importing employees:', error);
                 alert('Failed to import employees: ' + error.data);
             });
         };
 
         // Clear found employee
-        $scope.clearFoundEmployee = function() {
+        $scope.clearFoundEmployee = function () {
             $scope.foundEmployee = null;
             $scope.searchId = null;
         };
 
         // Cancel form
-        $scope.cancelForm = function() {
+        $scope.cancelForm = function () {
             $scope.showForm = false;
             $scope.currentEmployee = {};
             $scope.formTitle = '';

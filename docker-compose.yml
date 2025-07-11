@@ -12,7 +12,7 @@ services:
     volumes:
       - oracle-data:/opt/oracle/oradata
     healthcheck:
-      test: ["CMD", "sqlplus", "-L", "myappuser/myapppassword@//localhost:1521/XEPDB1"]
+      test: [ "CMD", "sqlplus", "-L", "myappuser/myapppassword@//localhost:1521/XEPDB1" ]
       interval: 30s
       timeout: 10s
       retries: 5
