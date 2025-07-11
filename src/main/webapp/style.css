@@ -1,0 +1,19 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.card {
+    max-width: 600px;
+}
+
+.text-danger {
+    font-size: 0.875em;
+}

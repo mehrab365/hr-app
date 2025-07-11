@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  oracle-xe:
+    image: gvenzl/oracle-xe:latest
+    environment:
+      - ORACLE_PASSWORD=admin123
+      - APP_USER=myappuser
+      - APP_USER_PASSWORD=myapppassword
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "sqlplus", "-L", "myappuser/myapppassword@//localhost:1521/XEPDB1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    container_name: oracle-xe
+
+volumes:
+  oracle-data:
