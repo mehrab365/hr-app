@@ -1,6 +1,7 @@
 package com.example.hrapp.service;
 
 import com.example.hrapp.entity.Employee;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
@@ -10,5 +11,5 @@ public interface EmployeeService {
     Employee getById(Long id);
     Employee save(Employee employee);
     void delete(Long id);
-    void importFromXml(File file);
+    List<Employee> importFromXml(MultipartFile file);
 }

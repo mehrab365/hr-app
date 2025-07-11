@@ -4,28 +4,36 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import lombok.*;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @XmlAttribute(name = "id")
     private Long id;
 
     @NotBlank
+    @XmlElement(name = "firstname")
     private String firstName;
 
     @NotBlank
+    @XmlElement(name = "lastname")
     private String lastName;
 
     @NotBlank
@@ -35,10 +43,9 @@ public class Employee {
     private String division;
 
     @NotNull
-    @Positive
     private Integer building;
 
-    @NotNull
-    @Positive
-    private Integer room;
+    @NotBlank
+    private String room;
 }
+

@@ -4,6 +4,31 @@ angular.module('employeeApp', ['ngRoute'])
             .when('/', {
                 template: `
                     <div class="mb-3">
+                        <div class="input-group mb-2" style="max-width: 300px;">
+                            <input type="number" class="form-control" ng-model="searchId" placeholder="Enter Employee ID">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" ng-click="findEmployeeById()">Find by ID</button>
+                            </div>
+                        </div>
+                        <div ng-if="foundEmployee" class="card mb-3">
+                            <div class="card-header">Employee Details</div>
+                            <div'>
+                                <div class="card-body">
+                                    <p><strong>ID:</strong> {{foundEmployee.id}}</p>
+                                    <p><strong>First Name:</strong> {{foundEmployee.firstName}}</p>
+                                    <p><strong>Last Name:</strong> {{foundEmployee.lastName}}</p>
+                                    <p><strong>Title:</strong> {{foundEmployee.title}}</p>
+                                    <p><strong>Division:</strong> {{foundEmployee.division}}</p>
+                                    <p><strong>Building:</strong> {{foundEmployee.building}}</p>
+                                    <p><strong>Room:</strong> {{foundEmployee.room}}</p>
+                                    <button class="btn btn-sm btn-warning" ng-click="showUpdateForm(foundEmployee)">Edit</button>
+                                    <button class="btn btn-sm btn-danger" ng-click="deleteEmployee(foundEmployee.id)">Delete</button>
+                                    <button class="btn btn-sm Appending a new line...sm btn-secondary" ng-click="clearFoundEmployee()">Clear</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
                         <button class="btn btn-primary" ng-click="showCreateForm()">Add Employee</button>
                         <input type="file" id="xmlFile" accept=".xml" class="mt-2">
                         <button class="btn btn-secondary" ng-click="importEmployees()">Import from XML</button>
@@ -97,16 +122,35 @@ angular.module('employeeApp', ['ngRoute'])
         $scope.currentEmployee = {};
         $scope.showForm = false;
         $scope.formTitle = '';
+        $scope.searchId = null;
+        $scope.foundEmployee = null;
 
         // Fetch all employees
         $scope.loadEmployees = function() {
-            $http.get('http://localhost:8080/api/employees')
+            $http.get('/api/employees')
                 .then(function(response) {
                     $scope.employees = response.data;
                 })
                 .catch(function(error) {
                     console.error('Error fetching employees:', error);
                     alert('Failed to load employees');
+                });
+        };
+
+        // Find employee by ID
+        $scope.findEmployeeById = function() {
+            if (!$scope.searchId) {
+                alert('Please enter an Employee ID');
+                return;
+            }
+            $http.get('/api/employees/' + $scope.searchId)
+                .then(function(response) {
+                    $scope.foundEmployee = response.data;
+                })
+                .catch(function(error) {
+                    console.error('Error finding employee:', error);
+                    alert('Employee not found or error occurred');
+                    $scope.foundEmployee = null;
                 });
         };
 
@@ -128,8 +172,8 @@ angular.module('employeeApp', ['ngRoute'])
         $scope.saveEmployee = function() {
             var method = $scope.currentEmployee.id ? 'PUT' : 'POST';
             var url = $scope.currentEmployee.id ?
-                'http://localhost:8080/api/employees/' + $scope.currentEmployee.id :
-                'http://localhost:8080/api/employees';
+                '/api/employees/' + $scope.currentEmployee.id :
+                '/api/employees';
 
             $http({
                 method: method,
@@ -138,6 +182,7 @@ angular.module('employeeApp', ['ngRoute'])
             }).then(function(response) {
                 $scope.loadEmployees();
                 $scope.cancelForm();
+                $scope.foundEmployee = null; // Clear found employee after save
             }).catch(function(error) {
                 console.error('Error saving employee:', error);
                 alert('Failed to save employee');
@@ -147,9 +192,10 @@ angular.module('employeeApp', ['ngRoute'])
         // Delete employee
         $scope.deleteEmployee = function(id) {
             if (confirm('Are you sure you want to delete this employee?')) {
-                $http.delete('http://localhost:8080/api/employees/' + id)
+                $http.delete('/api/employees/' + id)
                     .then(function() {
                         $scope.loadEmployees();
+                        $scope.foundEmployee = null; // Clear found employee after delete
                     })
                     .catch(function(error) {
                         console.error('Error deleting employee:', error);
@@ -169,7 +215,7 @@ angular.module('employeeApp', ['ngRoute'])
             var formData = new FormData();
             formData.append('file', file);
 
-            $http.post('http://localhost:8080/api/employees/import', formData, {
+            $http.post('/api/employees/import', formData, {
                 headers: { 'Content-Type': undefined }
             }).then(function(response) {
                 alert(response.data);
@@ -179,6 +225,12 @@ angular.module('employeeApp', ['ngRoute'])
                 console.error('Error importing employees:', error);
                 alert('Failed to import employees: ' + error.data);
             });
+        };
+
+        // Clear found employee
+        $scope.clearFoundEmployee = function() {
+            $scope.foundEmployee = null;
+            $scope.searchId = null;
         };
 
         // Cancel form

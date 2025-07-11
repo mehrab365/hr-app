@@ -50,14 +50,9 @@ public class EmployeeController {
     }
 
     @PostMapping("/import")
-    public ResponseEntity<String> importEmployees(@RequestParam("file") MultipartFile file) {
-        try {
-            File tempFile = File.createTempFile("employees", ".xml");
-            employeeService.importFromXml(tempFile);
-            tempFile.delete();
-            return ResponseEntity.ok("Employees imported successfully");
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("Failed to import XML: " + e.getMessage());
-        }
+    public List<Employee> importEmployees(@RequestParam("file") MultipartFile file) {
+        List<Employee> employees = employeeService.importFromXml(file);
+        employees.forEach(employee -> employeeService.save(employee));
+        return getAllEmployees();
     }
 }
