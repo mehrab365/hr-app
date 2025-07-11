@@ -103,7 +103,7 @@ angular.module('employeeApp', ['ngRoute'])
                                 </div>
                                 <div class="form-group">
                                     <label>Room</label>
-                                    <input type="number" class="form-control" ng-model="currentEmployee.room" required>
+                                    <input type="text" class="form-control" ng-model="currentEmployee.room" required>
                                     <div ng-show="employeeForm.room.$touched && employeeForm.room.$invalid" class="text-danger">
                                         Room is required
                                     </div>
